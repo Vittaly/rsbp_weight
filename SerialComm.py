@@ -4,8 +4,8 @@ import sys
 from PyQt4 import QtCore, QtGui, uic
 import serial
 import Queue
-import threading
-import thread
+#import threading
+##import thread
 import datetime
 from serial_port import serial_ports
 from PrintRecipe import print_FILE
@@ -17,7 +17,7 @@ import MySQLdb
 OperatorList=[]
 recipe_DATA =[]
 RecipeNAMELIST=[]
-ingredientList=[]
+#ingredientList=[]
 ingredientList1=[]
 ingredientValueKGList=[]
 ingredientValueGMList=[]
@@ -45,7 +45,7 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 class MyApp(QtGui.QMainWindow, Ui_MainWindow):
    
 
-    
+    ingredientList = []
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
@@ -80,7 +80,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.comport_combox.currentIndexChanged.connect(self.selectComPort)
         self.comport_combox2.currentIndexChanged.connect(self.selectComPort2)
         self.threadclass=ThreadClass()
-        thread=ThreadClass()
+#        thread=ThreadClass()
         global white
         white="#000000"
         global red
@@ -214,7 +214,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         
         msg1.setText("Save the current Settings \n Not yet implemented")
 
-        retval = msg1.exec_()
+        msg1.exec_()
 
         """*
 
@@ -424,9 +424,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         indexcomboBox1=self.comboBox1.currentIndex()
         self.text_FILE(indexcomboBox1)
         time.sleep(.5)
-        global stopFlag
-        stopFlag=False
-        #print "Thread Start..."
         self.threadclass.start()
         
         """*
@@ -521,7 +518,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         msg1=QtGui.QMessageBox()
         msg1.setIcon(QtGui.QMessageBox.Information)
         msg1.setText( "Select a valid Comport.")
-        retval = msg1.exec_()
+        msg1.exec_()
 
 
 
@@ -529,7 +526,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
     msgBox_data=""
     def msgbox(self):
         self.nextButton.hide()
-        recipename=""
         
         msg=QtGui.QMessageBox()
         msg.setIcon(QtGui.QMessageBox.Information)
@@ -541,13 +537,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         
         #print "msgBox " + str(RcpNAME)
-        ValueKG=""
+#        ValueKG=""
         #print ingredientValueKGList
         
         global msgBox_data
         weightTotal=0
         toleranceTotal=0
-        rcpMsgName=RcpNAME
         
 
         msgBox_data1=""
@@ -570,7 +565,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         #msg.setText( "Recipe " +str(RcpNAME) +" Created")
         msg_box_list[:]=[]
         self.print_Recipe_Details(RcpNAME,msgBox_data1,weightTotal,toleranceTotal,operator_value)
-        retval = msg.exec_()
+        msg.exec_()
 
         """*
 
@@ -731,11 +726,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         msgBox_data+="\n"
 
         msg_box_list.append(msgBox_data)
-        self.threadclass.start()
-        j=ingrd
-        if (ingrd<len(ingredientList)):
+        
+        global ingrNum
+        ingrNum += 1
+        if (ingrNum<len(self.ingredientList)):
             #print "IN IF Ingrd" + str(ingrd)
-            self.Call(j)
+            self.Call(ingrNum)
             self.threadclass.start()
         else:
             self.text_label.setText("RECIPE "+ str(RcpNAME) +" CREATED")
@@ -778,7 +774,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
                     
                 elif(float(SERIAL_DATA_P)<float(single_ingredient_WT)):
-                    
+                    self.nextButton.hide()  
                     self.lcdNumber2.setStyleSheet(style_str1 % yellow)
                     
                     
@@ -786,7 +782,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                     default_value = True
 
                 elif(float(SERIAL_DATA_P)>(float(single_ingredient_WT))):
-                    
+                    self.nextButton.hide()
                     self.lcdNumber2.setStyleSheet(style_str1 % red)
                     global default_value
                     default_value = True
@@ -883,7 +879,6 @@ rent Weight Value.
         RecipeNAMELIST[:]=[]
         OperatorList[:]=[]
         RecipeList=[]
-        RcpNAME=""
 
         db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
         curs=db.cursor()
@@ -914,7 +909,6 @@ rent Weight Value.
             PortFile=open('write.txt','r')
             for portline in  PortFile:
                 singleport=portline.split('\t')
-                singleportlen=len(singleport)
                 for k in range (len(singleport)):
                     if (k==0):
                         pass
@@ -984,8 +978,8 @@ rent Weight Value.
 
         #print ingredientList
   
-        self.text_label.setText(ingredientList[j])
-        single_ingredient=ingredientList[j]
+        self.text_label.setText(self.ingredientList[j])
+        single_ingredient=self.ingredientList[j]
         single_ingredient1=single_ingredient.split(',')
         global single_ingredient_UNIT
         global single_ingredient_WT
@@ -997,22 +991,7 @@ rent Weight Value.
         single_ingredient_WT=single_ingredient1[2]
         single_ingredient_TL=single_ingredient1[3]
         
-        int_value=map(int,re.findall(r'\d+',ingredientList[j] ))
-        #print int_value
-        global ingrd
-        ingrd=int_value[0]
-        #print ingrd
-        kg=200
-    
-        global KG1    
-        global GM1
-
-
-        global TL1
-
-        
-        j=j+1
-        #print "-------------------------------"+str(j)
+       
         self.combineDATA=True
             
             
@@ -1026,7 +1005,6 @@ rent Weight Value.
         self.threadclass.stop()
         time.sleep(.5)
         global RcpNAME
-        RecipeList=[]
         for count in range(self.comboBox1.count()):
             #print self.comboBox1.itemText(count)
         #print "Current index",i,"selection changed ",self.comboBox1.currentText()
@@ -1036,16 +1014,17 @@ rent Weight Value.
 
         with db:
             curs.execute("SELECT * from " + str(RcpNAME))
-
+        self.ingredientList = []
         for reading in curs.fetchall():
             #print str(reading[0])
-            ingredientList.append(str(reading[0]))
+            self.ingredientList.append(str(reading[0]))
 
         curs.close()
         db.close()
         #print ingredientList
-        j=0
-        self.Call(j)
+        global ingrNum
+        ingrNum = 0
+        self.Call(ingrNum)
         self.start.show()
 
                 
@@ -1068,11 +1047,10 @@ rent Weight Value.
 
        
 class ThreadClass(QtCore.QThread):
+    stopFlag=False
     def __init__(self,parent= None):
         super(ThreadClass, self ).__init__(parent)
-        global stopFlag
-        stopFlag=False
-        #self.myapp=MyApp()
+        
 
 
        
@@ -1110,7 +1088,8 @@ class ThreadClass(QtCore.QThread):
 
     def run(self):
        
-        #print "Enter in RUn "
+        print "Enter in RUn "
+        self.stopFlag=False
         #print "Comport NAme "+str(ComportName)
         #print baudrate_value
         #print baudrate_value2
@@ -1171,55 +1150,31 @@ class ThreadClass(QtCore.QThread):
             #print "HERE"
        
             #print "Stop Flag " +str(stopFlag)
-            if (stopFlag):
-                #print "Enter in if"
+            if (self.stopFlag):
+                print "Enter in stopFlag"
                 global stopFlag
                 #print stopFlag
-                stopFlag=False
+                self.stopFlag=False
                 #print stopFlag
                 break
             else:
-                #print "ELSE"
-                
-                #if (checkValueOne):
-                    #val=serial0.readline()
-                #elif(checkValueTwo):
-                    #val=serial1.readline()
-                #sign=str(val[0:1])
-                SignValue="+"
-                #print "::---" +str(SerialPortAvailable)
-                #if(sign=='1'):
-                    #global SignValue
-                    #SignValue="+"
-                #else:
-                    #global SignValue
-                    #SignValue="-"
                 try:
-                    #print "in try"
                     val =SerialPortAvailable.readline()
                     print "--------------------------------------------"
                     print val
                     if(val==''):
-                        #print "DATA"
-                        
-                        
-                        #print "END"
-                        #self.stop()
-                        #myapp=MyApp()
+                    
                         msgBOXvalue="NULL"
                         self.emit(QtCore.SIGNAL('MSGBOX'),msgBOXvalue)
-                        #self.myapp.Comport_msgBox()
                         break
                     else:
-                        VALUE=str(val).split(" ")
                         weightKgValue=val.splitlines()
                         WKGValue=str(weightKgValue[0].strip())
                         WKGData=WKGValue.replace(" ","")
                         if(WKGData.find("kg")>0):
                             WKGData1=WKGData.split('kg')
                             WKGDATA=WKGData1[0]
-                            try:
-                                
+                            try:                                
                                 global SERIALDATA
                                 SERIALDATA=str(WKGDATA)
                                 float(SERIALDATA)
@@ -1253,15 +1208,7 @@ class ThreadClass(QtCore.QThread):
                 #VALUE=str(val).split(" ")
                 #print ":::::::::::::::::::::::::::::::::::::::::::::::::::" +str(VALUE[1])
                 #SERIALDATA=str(val[2:9])
-                
-                """if (len(VALUE)>0):
-                    try:
-                        SERIALDATA=str(VALUE[1])
-                        float(SERIALDATA)
-                    except:
-                        continue
-                else:
-                    continue"""
+            
                 SERIALDATA_STRING=str(SERIALDATA)
                 #print SERIALDATA_STRING
                 global SERIAL_DATA_P
@@ -1303,8 +1250,7 @@ class ThreadClass(QtCore.QThread):
                 
     def stop(self):
         #print "Thread Stop"
-        global stopFlag
-        stopFlag=True
+        self.stopFlag=True
 
 
 
