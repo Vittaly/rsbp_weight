@@ -1,0 +1,4 @@
+socat PTY,link=/tmp/ttyS100 PTY,link=/tmp/ttyS101
+for i in {1..200}; do echo 15 kg > /tmp/ttyS101; sleep .1; echo $i;  done
+for i in {1..100}; do echo 10 kg > /tmp/ttyS101; sleep .1; echo $i;  done
+
