@@ -1,2 +1,2 @@
-user = root
-password = Raspberry
+user = raspbery
+password = 1234
