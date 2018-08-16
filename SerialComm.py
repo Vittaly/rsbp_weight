@@ -52,7 +52,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.combineDATA=False
         self.setWindowTitle("Weighing Scale R-PI")
-        self.setFixedSize(933,480)
+        #self.setFixedSize(933,480)
         self.threadclass=ThreadClass()
         self.comboBox1.addItem("Select Recipe")
         self.setDefault()
@@ -112,6 +112,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.checkBox_2.setChecked(False)
         self.checkBox_2.stateChanged.connect(self.doCheck2)
         self.doCheck2()
+        
+        pxm = QtGui.QPixmap("logo.png")
+        self.label_img.setGeometry(self.label_img.x(), self.label_img.y(), pxm.width(), pxm.height())        
+        self.label_img.setPixmap(pxm)
+        
 
          
 
@@ -1259,7 +1264,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     #print "Starting .."
     window = MyApp()
-    window.show()
+    window.showFullScreen()
     #print "Starting ...."
     sys.exit(app.exec_())
     #print "3"
