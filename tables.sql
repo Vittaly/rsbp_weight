@@ -1,0 +1,16 @@
+create table operator (id MEDIUMINT NOT NULL AUTO_INCREMENT, operator_name varchar(255) NOT NULL, primary key (id));
+create table recipe (id MEDIUMINT NOT NULL AUTO_INCREMENT, recipe_name varchar(255) NOT NULL, active BIT(1) NOT NULL, primary key (id));
+insert into recipe values (0, 'recipe one', 1);
+insert into recipe values (0, 'recipe two', 1);
+create table ingredient (id MEDIUMINT NOT NULL AUTO_INCREMENT, ingredient_name varchar(255) NOT NULL, bulk int, primary key (id));
+insert into ingredient values (0, 'ingredient one',null);
+insert into ingredient values (0, 'ingredient two',null);
+insert into ingredient values (0, 'ingredient three',null);
+insert into ingredient values (0, 'ingredient four', 3);
+create table recipe_detail (id MEDIUMINT NOT NULL AUTO_INCREMENT, recipe_id MEDIUMINT NOT NULL, ingredient_id MEDIUMINT NOT NULL, tolerance DECIMAL(5,2) NOT NULL, requested DECIMAL(9,3) NOT NULL, primary key (id));
+insert into recipe_detail values (0, 1, 1, .05, 10);
+insert into recipe_detail values (0, 1, 2, .05, 11);
+insert into recipe_detail values (0, 1, 4, .05, 13);
+insert into recipe_detail values (0, 1, 3, .05, 14);
+create table batch (id MEDIUMINT NOT NULL AUTO_INCREMENT, recipe_id MEDIUMINT NOT NULL, status TINYINT, timestamp  DATETIME ON UPDATE CURRENT_TIMESTAMP,  primary key (id));
+create table batch_detail (id MEDIUMINT NOT NULL AUTO_INCREMENT, batch_id MEDIUMINT NOT NULL, ingredient_id MEDIUMINT NOT NULL, weighed DECIMAL(9,3), primary key (id));
