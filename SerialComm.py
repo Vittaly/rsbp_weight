@@ -14,6 +14,8 @@ import time
 global i
 import re
 import MySQLdb
+
+
 OperatorList=[]
 recipe_DATA =[]
 RecipeNAMELIST=[]
@@ -45,14 +47,27 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 class MyApp(QtGui.QMainWindow, Ui_MainWindow):
    
 
-    ingredientList = []
+    ingredientList = []    
+    batchNP = ''
+    batchN = ''
+    curBatchId = 0
+    batchRes = []
+    operator_value = ''
+    
     def __init__(self):
+        nn = datetime.datetime.now()
+        self.batchNP = nn.strftime("%m-%d-%Y %H:%M {0}-").format ('1' if 6 >= nn.hour >= 17 else '2')
+        
+        
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.combineDATA=False
         self.setWindowTitle("Weighing Scale R-PI")
         #self.setFixedSize(933,480)
+        
+        self.batch_label.setText(self.batchNP) 
+        
         self.threadclass=ThreadClass()
         self.comboBox1.addItem("Select Recipe")
         self.setDefault()
@@ -80,6 +95,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.comport_combox.currentIndexChanged.connect(self.selectComPort)
         self.comport_combox2.currentIndexChanged.connect(self.selectComPort2)
         self.threadclass=ThreadClass()
+        self.batch_lineEdit.textChanged.connect(self.batchNChange)
 #        thread=ThreadClass()
         global white
         white="#000000"
@@ -104,6 +120,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.connect(self.threadclass,QtCore.SIGNAL('combine'),self.CHECK_DATA)
         self.nextButton.clicked.connect(self.selectionchange)
         self.nextButton.hide()
+        self.start.hide()
+        self.CancelButton.hide()
         self.nextButton_2.clicked.connect(self.FilePortSetting)
         self.start.clicked.connect(self.startThread)
         self.checkBox.setChecked(True)
@@ -118,7 +136,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.label_img.setPixmap(pxm)
         
 
-         
+    def batchNChange(self):
+        self.batchN = self.batchNP + str(self.batch_lineEdit.text()).upper()
+        self.start.show()
 
 
 
@@ -428,8 +448,26 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         #print "Start"
         indexcomboBox1=self.comboBox1.currentIndex()
         self.text_FILE(indexcomboBox1)
-        time.sleep(.5)
+        
+        db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
+        curs=db.cursor()
+        curs.execute("insert into batch (id, recipe_id, status) values (0, %s, 1)",  [self.comboBox1.itemData(self.comboBox1.currentIndex()).toInt()[0]])
+        curs.execute('SELECT LAST_INSERT_ID()')
+        self.curBatchId = int(curs.fetchone()[0])
+        curs.close()
+        db.commit()
+        db.close()
+        
+        
         self.threadclass.start()
+        
+        self.batch_lineEdit.hide()
+        self.CancelButton.show()
+        self.batch_label.setText(self.batchN) 
+        
+        
+        
+        
         
         """*
 
@@ -559,17 +597,17 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             
             weightTotal+= int(weightdata[1])
             
-            toleranceTotal+= int(weightdata[2])
+            toleranceTotal+= float(weightdata[2])
             
             #print msgBox_data1
         #print "wwww" +str(weightTotal) +str( toleranceTotal)
         Date= datetime.datetime.now().date()
         Time=datetime.datetime.now().time()
         msg.setText( "Recipe " +str(RcpNAME) +" Created")
-        msg.setDetailedText("Operator : "+str(operator_value)+"\n"+str("Date ="+str(Date))+"\n"+str("Time ="+str(Time))+"\n"+str(msgBox_data1)+"\n"+"\t"+"Total "+str(weightTotal)+" , "+str(toleranceTotal))
+        msg.setDetailedText("Operator : "+str(self.operator_value)+"\n"+str("Date ="+str(Date))+"\n"+str("Time ="+str(Time))+"\n"+str(msgBox_data1)+"\n"+"\t"+"Total "+str(weightTotal)+" , "+str(toleranceTotal))
         #msg.setText( "Recipe " +str(RcpNAME) +" Created")
         msg_box_list[:]=[]
-        self.print_Recipe_Details(RcpNAME,msgBox_data1,weightTotal,toleranceTotal,operator_value)
+        self.print_Recipe_Details(RcpNAME,msgBox_data1,weightTotal,toleranceTotal,self.operator_value)
         msg.exec_()
 
         """*
@@ -658,8 +696,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         for count in range(self.baud_combox.count()):
             #print self.comboBox2.itemText(count)
         #print "Current index",o,"selection changed ",self.comboBox2.currentText()
-            global operator_value
-            operator_value=self.comboBox2.currentText()
+            
+            self.operator_value=self.comboBox2.currentText()
         
 
                 
@@ -696,10 +734,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         if ((default_value) and (UnitCheckKG)):
             
             self.lcdNumber2.display(float(val))
-            self.lcdNumber.display("0")
+            #self.lcdNumber.display("0")
         elif((default_value) and (UnitCheckGM)):
 
-            self.lcdNumber.display(float(val))
+            #self.lcdNumber.display(float(val))
             self.lcdNumber2.display("0")
 
 
@@ -732,6 +770,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         msg_box_list.append(msgBox_data)
         
+        self.batchRes.append({'ingredient_id':self.ingredientList[ingrNum]['ingredient_id'], 'weighed':float(msg_data)})
+        
         global ingrNum
         ingrNum += 1
         if (ingrNum<len(self.ingredientList)):
@@ -744,6 +784,15 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             self.threadclass.stop()
             self.msgbox()
             self.combineDATA=False
+            
+            db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
+            curs=db.cursor()
+            for r in elf.batchRes:
+                curs.execute("insert into batch (id, batch_id, ingredient_id, weighed) values (0, %s, %s, %s)",  [self.curBatchId,  r['ingredient_id'],  r['weighed']])
+            curs.close()
+            db.commit()
+            db.close()
+            
             print_FILE()
 
             
@@ -812,7 +861,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                     
                     self.nextButton.show()
                     self.threadclass.stop()
-                    self.lcdNumber.display(float(weightGM_value))
+                    #self.lcdNumber.display(float(weightGM_value))
                     
                     
                     global default_value
@@ -883,32 +932,31 @@ rent Weight Value.
         
         RecipeNAMELIST[:]=[]
         OperatorList[:]=[]
-        RecipeList=[]
+        #RecipeList=[]
 
         db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
         curs=db.cursor()
         with db:
-            curs.execute("SELECT OPERATOR_NAME from OPERATOR")
+            curs.execute("SELECT operator_name from operator")
         for operatorname in curs.fetchall():
             #print operatorname[0]
             OperatorList.append(operatorname[0])
         curs.close()
-
-        db.close()
-
-        db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
         curs=db.cursor()
+
+        self.comboBox1.clear()
+        
         with db:
-            curs.execute("SELECT RECIPE_NAME from RECIPE")
-        for reciepname in curs.fetchall():
-            #print reciepname[0]
-            RecipeList.append(reciepname[0])
+            curs.execute("SELECT id, recipe_name from recipe")
+        for rec in curs.fetchall():
+            self.comboBox1.addItem(rec[1],  rec[0])
         curs.close()
         db.close()
 
         #File = open("RecipeData.txt","r")
         #print "RecipeList" +str(RecipeList)
-        self.comboBox1.addItems(RecipeList)
+        
+      
         self.comboBox2.addItems(OperatorList)
         try:
             PortFile=open('write.txt','r')
@@ -983,18 +1031,18 @@ rent Weight Value.
 
         #print ingredientList
   
-        self.text_label.setText(self.ingredientList[j])
-        single_ingredient=self.ingredientList[j]
-        single_ingredient1=single_ingredient.split(',')
+        self.text_label.setText('Steep {0} of {1}. Ingridient: {2}'.format(j+1,   len(self.ingredientList), self.ingredientList[j]['ingredient_name'] ))
+        single_ingredient = self.ingredientList[j]
         global single_ingredient_UNIT
         global single_ingredient_WT
         global single_ingredient_TL
         global single_ingredient_NAME
 
-        single_ingredient_NAME=single_ingredient1[0]
-        single_ingredient_UNIT=single_ingredient1[1]
-        single_ingredient_WT=single_ingredient1[2]
-        single_ingredient_TL=single_ingredient1[3]
+        single_ingredient_NAME= single_ingredient['ingredient_name']
+        single_ingredient_UNIT='kg'
+        single_ingredient_WT=single_ingredient['requested']
+        single_ingredient_TL=single_ingredient['tolerance']
+        self.lcdNumber.display(float(single_ingredient_WT))
         
        
         self.combineDATA=True
@@ -1018,17 +1066,18 @@ rent Weight Value.
         curs=db.cursor()
 
         with db:
-            curs.execute("SELECT * from " + str(RcpNAME))
+            
+            curs.execute("SELECT rd.ingredient_id, i.ingredient_name, rd.tolerance, rd.requested, i.bulk from recipe_detail rd inner join ingredient i on rd.ingredient_id = i.id where rd.recipe_id = %s",   [self.comboBox1.itemData(self.comboBox1.currentIndex()).toInt()[0]])
         self.ingredientList = []
         for reading in curs.fetchall():
             #print str(reading[0])
-            self.ingredientList.append(str(reading[0]))
+            self.ingredientList.append({'ingredient_id':reading[0],  'ingredient_name':reading[1],  'tolerance': reading[2], 'requested':reading[3] })
 
         curs.close()
         db.close()
-        #print ingredientList
         global ingrNum
         ingrNum = 0
+        self.batchRes = []
         self.Call(ingrNum)
         self.start.show()
 
@@ -1267,6 +1316,5 @@ if __name__ == "__main__":
     window.showFullScreen()
     #print "Starting ...."
     sys.exit(app.exec_())
-    #print "3"
 
 

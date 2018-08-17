@@ -468,8 +468,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>30</y>
+      <x>60</x>
+      <y>40</y>
       <width>941</width>
       <height>521</height>
      </rect>
@@ -656,8 +656,8 @@
      <widget class="QLCDNumber" name="lcdNumber2">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>180</y>
+        <x>20</x>
+        <y>370</y>
         <width>271</width>
         <height>101</height>
        </rect>
@@ -693,8 +693,8 @@
      <widget class="QLCDNumber" name="lcdNumber">
       <property name="geometry">
        <rect>
-        <x>380</x>
-        <y>180</y>
+        <x>370</x>
+        <y>370</y>
         <width>271</width>
         <height>101</height>
        </rect>
@@ -725,8 +725,8 @@
      <widget class="QPushButton" name="start">
       <property name="geometry">
        <rect>
-        <x>730</x>
-        <y>250</y>
+        <x>720</x>
+        <y>370</y>
         <width>141</width>
         <height>29</height>
        </rect>
@@ -747,11 +747,48 @@
      <widget class="QLabel" name="text_label">
       <property name="geometry">
        <rect>
-        <x>430</x>
-        <y>76</y>
-        <width>441</width>
+        <x>20</x>
+        <y>300</y>
+        <width>861</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>133</red>
+            <green>133</green>
+            <blue>133</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
       </property>
       <property name="font">
        <font>
@@ -769,8 +806,8 @@
      <widget class="QPushButton" name="nextButton">
       <property name="geometry">
        <rect>
-        <x>730</x>
-        <y>200</y>
+        <x>720</x>
+        <y>410</y>
         <width>141</width>
         <height>29</height>
        </rect>
@@ -854,7 +891,7 @@
      <widget class="QLabel" name="label_img">
       <property name="geometry">
        <rect>
-        <x>390</x>
+        <x>420</x>
         <y>0</y>
         <width>54</width>
         <height>17</height>
@@ -868,6 +905,231 @@
       </property>
       <property name="text">
        <string>TextLabel</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="CancelButton">
+      <property name="geometry">
+       <rect>
+        <x>720</x>
+        <y>450</y>
+        <width>141</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Bitstream Vera Sans Mono</family>
+        <pointsize>13</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="bulk_label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>340</y>
+        <width>861</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>133</red>
+            <green>133</green>
+            <blue>133</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <family>Bitstream Vera Sans Mono</family>
+        <pointsize>16</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="batch_label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>80</y>
+        <width>371</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>133</red>
+            <green>133</green>
+            <blue>133</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <family>Bitstream Vera Sans Mono</family>
+        <pointsize>16</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Batch #</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="batch_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>261</x>
+        <y>76</y>
+        <width>21</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active/>
+        <inactive/>
+        <disabled/>
+       </palette>
+      </property>
+      <property name="inputMask">
+       <string/>
+      </property>
+      <property name="maxLength">
+       <number>1</number>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="batch_label_title">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>371</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>202</red>
+            <green>202</green>
+            <blue>202</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>133</red>
+            <green>133</green>
+            <blue>133</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <family>Bitstream Vera Sans Mono</family>
+        <pointsize>16</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Batch #:</string>
       </property>
      </widget>
     </widget>
