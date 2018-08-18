@@ -893,8 +893,8 @@
        <rect>
         <x>420</x>
         <y>0</y>
-        <width>54</width>
-        <height>17</height>
+        <width>501</width>
+        <height>111</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -907,7 +907,7 @@
        <string>TextLabel</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="CancelButton">
+     <widget class="QPushButton" name="cancelButton">
       <property name="geometry">
        <rect>
         <x>720</x>
@@ -1572,6 +1572,65 @@
       </property>
      </widget>
     </widget>
+   </widget>
+   <widget class="QLabel" name="clock_label">
+    <property name="geometry">
+     <rect>
+      <x>279</x>
+      <y>38</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="WindowText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>202</red>
+          <green>202</green>
+          <blue>202</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="WindowText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>202</red>
+          <green>202</green>
+          <blue>202</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="WindowText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>133</red>
+          <green>133</green>
+          <blue>133</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="font">
+     <font>
+      <family>Noto Sans</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>00:00:00</string>
+    </property>
    </widget>
   </widget>
  </widget>
