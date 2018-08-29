@@ -147,7 +147,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
 
     def batchNChange(self):
-        self.batchN = self.batchNP + str(self.batch_lineEdit.text()).upper()
+        if len(self.batch_lineEdit.text()) > 0:
+            self.batchN = self.batchNP + str(self.batch_lineEdit.text()).upper()
+        else: 
+            self.batchN = ''
         self.checkReadyToStart()
 
 
@@ -622,6 +625,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         msg_box_list[:]=[]
         self.print_Recipe_Details(RcpNAME, msgBox_data1, self.weightTotal, 0, self.operator_value)
         msg.exec_()
+        
 
         """*
 
@@ -821,6 +825,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             curs.close()
             db.commit()
             db.close()
+            
+            self.resetForm()
 
             print_FILE()
 
@@ -847,7 +853,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                     global msg_data_tolrnc
                     msg_data_tolrnc =single_ingredient_TL
                     self.nextButton.show()
-                    self.threadclass.stop()
+                    #self.threadclass.stop()
                     self.lcdNumber2.display(float(weightKG_value))
 
                     global default_value
@@ -863,6 +869,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
                     global default_value
                     default_value = True
+                    self.nextButton.hide()
 
                 elif(float(SERIAL_DATA_P)>(float(single_ingredient_WT))):
                     self.nextButton.hide()
@@ -1156,10 +1163,23 @@ rent Weight Value.
     def checkReadyToStart(self):
         if len(self.batchN) > 0 and len(self.operator_value) > 0 and  self.comboBox1.currentIndex() > 0:
             self.start.show()
+        else: 
+            self.start.hide()
     def cancelButtonClick(self,  b=None):
         self.threadclass.stop()            
         self.combineDATA=False
             
+        self.resetForm()
+        
+        db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
+        curs=db.cursor()
+        curs.execute("update batch b set status = 0, timestamp = now() where id = %s",  [self.curBatchId])            
+        curs.close()
+        db.commit()
+        db.close()
+        
+        self.curBatchId = 0
+    def resetForm(self):
         self.start.hide()
         self.nextButton.hide()
         self.comboBox1.setCurrentIndex(0)
@@ -1171,15 +1191,6 @@ rent Weight Value.
         self.batchNP = nn.strftime("%m-%d-%Y %H:%M {0}-").format ('1' if 6 >= nn.hour >= 17 else '2')
         self.batch_label.setText(self.batchNP)
         self.text_label.setText('')
-        
-        db = MySQLdb.connect(host="localhost",user=USER,passwd=PASSWORD,db="mysql")
-        curs=db.cursor()
-        curs.execute("update batch b set status = 0, timestamp = now() where id = %s",  [self.curBatchId])            
-        curs.close()
-        db.commit()
-        db.close()
-        
-        self.curBatchId = 0
         
     def refreshTime(self):
         time = QtCore.QTime.currentTime()

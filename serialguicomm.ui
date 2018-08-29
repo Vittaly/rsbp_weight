@@ -847,9 +847,9 @@
      <widget class="QLabel" name="label_5">
       <property name="geometry">
        <rect>
-        <x>660</x>
-        <y>250</y>
-        <width>61</width>
+        <x>650</x>
+        <y>430</y>
+        <width>51</width>
         <height>41</height>
        </rect>
       </property>
@@ -863,17 +863,54 @@
        </font>
       </property>
       <property name="text">
-       <string>Gm</string>
+       <string>Kg</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>250</y>
+        <x>300</x>
+        <y>430</y>
         <width>41</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>247</red>
+            <green>255</green>
+            <blue>251</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>247</red>
+            <green>255</green>
+            <blue>251</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Text">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>133</red>
+            <green>133</green>
+            <blue>133</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
       </property>
       <property name="font">
        <font>
@@ -1132,6 +1169,21 @@
        <string>Batch #:</string>
       </property>
      </widget>
+     <zorder>lcdNumber2</zorder>
+     <zorder>lcdNumber</zorder>
+     <zorder>comboBox2</zorder>
+     <zorder>start</zorder>
+     <zorder>text_label</zorder>
+     <zorder>nextButton</zorder>
+     <zorder>comboBox1</zorder>
+     <zorder>label_img</zorder>
+     <zorder>cancelButton</zorder>
+     <zorder>bulk_label</zorder>
+     <zorder>batch_label</zorder>
+     <zorder>batch_lineEdit</zorder>
+     <zorder>batch_label_title</zorder>
+     <zorder>label_5</zorder>
+     <zorder>label_6</zorder>
     </widget>
     <widget class="QWidget" name="tab_10">
      <attribute name="title">
@@ -1576,9 +1628,9 @@
    <widget class="QLabel" name="clock_label">
     <property name="geometry">
      <rect>
-      <x>279</x>
+      <x>270</x>
       <y>38</y>
-      <width>141</width>
+      <width>301</width>
       <height>41</height>
      </rect>
     </property>
