@@ -8,12 +8,14 @@ import Queue
 ##import thread
 import datetime
 from serial_port import serial_ports
-from PrintRecipe import print_FILE
+#from PrintRecipe import print_FILE
 queue = Queue.Queue(1000)
 import time
 global i
 import re
 import MySQLdb
+
+from zebra import zebra
 
 
 OperatorList=[]
@@ -827,8 +829,13 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             db.close()
             
             self.resetForm()
+            
+            z = zebra()
+            z.setup()
+            z.setqueue('zpl')
+            z.output('^XA^FO20,20^ASN,70,70^FB500,120,,^FDCompany name \&Recipt name\&Author\&Ingr 1 5Kg\&Ingr 2 3Kg\&total 80Rg^FS^XZ')
 
-            print_FILE()
+            #print_FILE()
 
 
 
