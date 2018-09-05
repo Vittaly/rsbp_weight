@@ -790,7 +790,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         msg_box_list.append(msgBox_data)
 
-        self.batchRes.append({'ingredient_id':self.ingredientList[ingrNum]['ingredient_id'], 'weighed':float(msg_data)})
+        self.batchRes.append({'ingredient_id':self.ingredientList[ingrNum]['ingredient_id'], 'ingredient_name': single_ingredient_NAME,  'weighed':float(msg_data)})
 
         global ingrNum
         ingrNum += 1
@@ -828,17 +828,54 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             db.commit()
             db.close()
             
+            self.zebraPrint()     
             self.resetForm()
-            
-            z = zebra()
-            z.setup()
-            z.setqueue('zpl')
-            z.output('^XA^FO20,20^ASN,70,70^FB500,120,,^FDCompany name \&Recipt name\&Author\&Ingr 1 5Kg\&Ingr 2 3Kg\&total 80Rg^FS^XZ')
 
             #print_FILE()
 
 
-
+    def zebraPrint(self):
+        f = open('zebra.conf',  'r')
+        with open('zebra.conf') as f:
+            zc = f.readlines()
+        zc = [x.strip() for x in zc] 
+        zebra_printer_name = None
+        for l in zc:
+            if l.split('=')[0] == 'printer':
+                zebra_printer_name = l.split('=')[1]
+       
+        if not zebra_printer_name:
+            msg=QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Critical)
+            msg.setText("Zebra printer not set in file zebra.conf")
+            msg.exec_()    
+            return
+           
+       
+        z = zebra(zebra_printer_name)
+            #z.setup()
+        print_lines = []
+        print_lines.append('Fosforera Centroamericana, S.A.')
+        print_lines.append('Operator:{0}'.format(str(self.operator_value)))
+        print_lines.append(self.batchN)
+            #Date= datetime.datetime.now().date()
+            #Time=datetime.datetime.now().time()
+        #print_lines.append(str(datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")))
+        global RcpNAME
+        max_string_len = 36
+        print_lines.append('Recipe: {0}'.format(RcpNAME))
+        for r in self.batchRes:
+            space_size = max_string_len - len(str(r['weighed'])) - 3 - len(str(r['ingredient_name']))
+            space =  '.' *  space_size if space_size > 0 else ' '
+            print_lines.append(('{0}' + space + '{1} Kg').format(r['ingredient_name'],  str(r['weighed']) ))  
+        print_lines.append('Total weight: {0} Kg'.format(self.weightTotal))
+        zpl_start = '^FO5,5'
+        zpl_font = '^AAN,18,10'
+        zpl_block_prop = '^FB438,999,L,10'
+        zpl_lines = '^FD{0}^FS'.format('\&'.join(print_lines))
+        zpl_str = '^XA{0}{1}{2}{3}^XZ'.format(zpl_start, zpl_block_prop,  zpl_font, zpl_lines)
+        z.output(zpl_str)
+       
 
     def CHECK_DATA(self,value):
         if(self.combineDATA):
